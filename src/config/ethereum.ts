@@ -4,8 +4,7 @@ import BonFyr from "../artifacts/contracts/MyNFT.sol/BonFyr.json";
 import { Puzzle } from "../typechain-types";
 import { ExternalProvider } from "@ethersproject/providers";
 
-const { ethereum: ethereumObj } = window;
-export const ethereum = ethereumObj;
+const { ethereum } = window;
 
 export const provider = new ethers.providers.Web3Provider(ethereum);
 const signer = provider.getSigner();
@@ -16,4 +15,4 @@ export const PUZZLE = new ethers.Contract(
   signer
 ) as Puzzle;
 
-// export { PUZZLE, ethereum };
+export { ethereum };
