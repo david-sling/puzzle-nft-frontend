@@ -1,4 +1,5 @@
-import React from "react";
+import * as React from "react";
+import Header from "./components/common/Header";
 import useWallet from "./hooks/useWallet";
 
 const App = () => {
@@ -6,6 +7,7 @@ const App = () => {
   console.log({ account, balance, currentChain });
   return (
     <div>
+      <Header />
       {account}
       <br />
       {balance}

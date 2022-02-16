@@ -1,8 +1,6 @@
 import { ethers } from "ethers";
 import { CONTRACT_ADDRESS } from "./constants";
-import BonFyr from "../artifacts/contracts/MyNFT.sol/BonFyr.json";
-import { Puzzle } from "../typechain-types";
-import { ExternalProvider } from "@ethersproject/providers";
+import PuzzleABI from "../artifacts/contracts/Puzzle.sol/Puzzle.json";
 
 const { ethereum } = window;
 
@@ -11,8 +9,8 @@ const signer = provider.getSigner();
 
 export const PUZZLE = new ethers.Contract(
   CONTRACT_ADDRESS,
-  BonFyr.abi,
+  PuzzleABI.abi,
   signer
-) as Puzzle;
+);
 
 export { ethereum };
