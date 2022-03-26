@@ -1,5 +1,5 @@
 import React from "react";
-import classes from "../../styles/components/common/Section.module.scss";
+import classes from "styles/common/Section.module.scss";
 
 interface Props
   extends React.DetailedHTMLProps<

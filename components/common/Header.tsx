@@ -1,6 +1,6 @@
 import React from "react";
 import { Logo } from "assets/images";
-import classes from "styles/components/common/Header.module.scss";
+import classes from "styles/common/Header.module.scss";
 import Section from "./Section";
 
 export default function Header() {
@@ -11,7 +11,7 @@ export default function Header() {
     >
       <div className={classes.header}>
         <div className={classes.logo}>
-          <Logo />
+          <Logo viewBox="0 0 28 23" />
           <h1>Ennefti</h1>
         </div>
         <nav className={classes.nav}>
