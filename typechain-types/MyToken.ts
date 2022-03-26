@@ -18,12 +18,11 @@ import { FunctionFragment, Result, EventFragment } from "@ethersproject/abi";
 import { Listener, Provider } from "@ethersproject/providers";
 import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from "./common";
 
-export interface PuzzleInterface extends utils.Interface {
-  contractName: "Puzzle";
+export interface MyTokenInterface extends utils.Interface {
+  contractName: "MyToken";
   functions: {
     "approve(address,uint256)": FunctionFragment;
     "balanceOf(address)": FunctionFragment;
-    "changeBaseUri(string)": FunctionFragment;
     "getApproved(uint256)": FunctionFragment;
     "getBalance()": FunctionFragment;
     "getTotalMinted()": FunctionFragment;
@@ -31,7 +30,7 @@ export interface PuzzleInterface extends utils.Interface {
     "name()": FunctionFragment;
     "owner()": FunctionFragment;
     "ownerOf(uint256)": FunctionFragment;
-    "payToMint(address)": FunctionFragment;
+    "payToMint(address,string)": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
     "safeMint(address,uint256,string)": FunctionFragment;
     "safeTransferFrom(address,address,uint256)": FunctionFragment;
@@ -52,10 +51,6 @@ export interface PuzzleInterface extends utils.Interface {
     values: [string, BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "balanceOf", values: [string]): string;
-  encodeFunctionData(
-    functionFragment: "changeBaseUri",
-    values: [string]
-  ): string;
   encodeFunctionData(
     functionFragment: "getApproved",
     values: [BigNumberish]
@@ -78,7 +73,10 @@ export interface PuzzleInterface extends utils.Interface {
     functionFragment: "ownerOf",
     values: [BigNumberish]
   ): string;
-  encodeFunctionData(functionFragment: "payToMint", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "payToMint",
+    values: [string, string]
+  ): string;
   encodeFunctionData(
     functionFragment: "renounceOwnership",
     values?: undefined
@@ -131,10 +129,6 @@ export interface PuzzleInterface extends utils.Interface {
 
   decodeFunctionResult(functionFragment: "approve", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "changeBaseUri",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(
     functionFragment: "getApproved",
     data: BytesLike
@@ -238,13 +232,13 @@ export type TransferEvent = TypedEvent<
 
 export type TransferEventFilter = TypedEventFilter<TransferEvent>;
 
-export interface Puzzle extends BaseContract {
-  contractName: "Puzzle";
+export interface MyToken extends BaseContract {
+  contractName: "MyToken";
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: PuzzleInterface;
+  interface: MyTokenInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -274,11 +268,6 @@ export interface Puzzle extends BaseContract {
 
     balanceOf(owner: string, overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    changeBaseUri(
-      uri: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     getApproved(
       tokenId: BigNumberish,
       overrides?: CallOverrides
@@ -305,6 +294,7 @@ export interface Puzzle extends BaseContract {
 
     payToMint(
       to: string,
+      uri: string,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -392,11 +382,6 @@ export interface Puzzle extends BaseContract {
 
   balanceOf(owner: string, overrides?: CallOverrides): Promise<BigNumber>;
 
-  changeBaseUri(
-    uri: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
   getApproved(
     tokenId: BigNumberish,
     overrides?: CallOverrides
@@ -420,6 +405,7 @@ export interface Puzzle extends BaseContract {
 
   payToMint(
     to: string,
+    uri: string,
     overrides?: PayableOverrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -504,8 +490,6 @@ export interface Puzzle extends BaseContract {
 
     balanceOf(owner: string, overrides?: CallOverrides): Promise<BigNumber>;
 
-    changeBaseUri(uri: string, overrides?: CallOverrides): Promise<void>;
-
     getApproved(
       tokenId: BigNumberish,
       overrides?: CallOverrides
@@ -527,7 +511,11 @@ export interface Puzzle extends BaseContract {
 
     ownerOf(tokenId: BigNumberish, overrides?: CallOverrides): Promise<string>;
 
-    payToMint(to: string, overrides?: CallOverrides): Promise<BigNumber>;
+    payToMint(
+      to: string,
+      uri: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     renounceOwnership(overrides?: CallOverrides): Promise<void>;
 
@@ -653,11 +641,6 @@ export interface Puzzle extends BaseContract {
 
     balanceOf(owner: string, overrides?: CallOverrides): Promise<BigNumber>;
 
-    changeBaseUri(
-      uri: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
     getApproved(
       tokenId: BigNumberish,
       overrides?: CallOverrides
@@ -684,6 +667,7 @@ export interface Puzzle extends BaseContract {
 
     payToMint(
       to: string,
+      uri: string,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -775,11 +759,6 @@ export interface Puzzle extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    changeBaseUri(
-      uri: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
     getApproved(
       tokenId: BigNumberish,
       overrides?: CallOverrides
@@ -806,6 +785,7 @@ export interface Puzzle extends BaseContract {
 
     payToMint(
       to: string,
+      uri: string,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
