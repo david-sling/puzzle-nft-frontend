@@ -1,5 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Raleway:wght@100;200;300;400;500;600;700;800;900&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Lato:wght@100;200;300;400;500;600;700;800;900&display=swap");
+@import "../assets/fonts/Sk-Modernist/Sk-Modernist.css";
 
 * {
   margin: 0;
@@ -7,5 +8,11 @@
   box-sizing: border-box;
 }
 body {
-  font-family: "Raleway", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  font-family: "Sk-Modernist", "Raleway", "Segoe UI", Tahoma, Geneva, Verdana,
+    sans-serif;
+  // font-family: "Raleway", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+button {
+  cursor: pointer;
+  border: 0;
 }
