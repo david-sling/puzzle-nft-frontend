@@ -2,6 +2,10 @@
   margin-top: 60px;
 }
 
+.innerContainer {
+  display: flex;
+}
+
 .left {
   h1 {
     font-size: 61.4115px;
@@ -23,5 +27,21 @@
         z-index: -1;
       }
     }
+  }
+}
+
+.right {
+  //   flex: 1;
+  width: 300px;
+  height: 300px;
+  overflow: hidden;
+  iframe {
+    height: 100%;
+    width: 100%;
+    border: 0;
+    // transform: scale(1.0017);
+    $min: 1px;
+    $max: calc(100% - $min);
+    clip-path: polygon($min $min, $min $max, $max $max, $max $min);
   }
 }
