@@ -1,7 +1,7 @@
 import { ethers } from "ethers";
 import { useCallback, useEffect, useState } from "react";
 import { ALLOWED_CHAINS } from "../config/constants";
-import { ethereum, provider } from "../config/ethereum";
+import { ethereum, checkMetamaskInstalled, provider } from "../config/ethereum";
 import { Chain } from "../interfaces";
 
 const useWallet = () => {
@@ -10,9 +10,11 @@ const useWallet = () => {
   const [currentChain, setCurrentChain] = useState<Chain | undefined>(
     undefined
   );
+  const isMetaMaskInstalled = checkMetamaskInstalled();
 
   const getCurrentChain = async (id?: number) => {
-    const chainId = id || (await provider.getNetwork()).chainId;
+    if (!checkMetamaskInstalled()) return setCurrentChain(undefined);
+    const chainId = id || (await provider?.getNetwork())?.chainId || NaN;
     setCurrentChain(
       ALLOWED_CHAINS.find((allowed) => chainId === allowed.chainId)
     );
@@ -21,6 +23,7 @@ const useWallet = () => {
   };
 
   const getAccount = async () => {
+    if (!checkMetamaskInstalled()) return setAccount("");
     const [account] =
       (await ethereum.request?.({
         method: "eth_requestAccounts",
@@ -32,7 +35,8 @@ const useWallet = () => {
   };
 
   const getBalance = useCallback(async () => {
-    const balance = await provider.getBalance(account);
+    if (!checkMetamaskInstalled()) return setBalance(0);
+    const balance = (await provider?.getBalance(account)) || NaN;
     setBalance(parseFloat(ethers.utils.formatEther(balance)));
   }, [account]);
 
@@ -45,7 +49,7 @@ const useWallet = () => {
     getBalance();
   }, [getBalance]);
 
-  return { account, balance, currentChain };
+  return { account, balance, currentChain, isMetaMaskInstalled };
 };
 
 export default useWallet;

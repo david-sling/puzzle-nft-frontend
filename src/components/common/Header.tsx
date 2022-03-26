@@ -7,6 +7,7 @@ export default function Header() {
   return (
     <Section className={classes.container}>
       <Logo />
+      HEADER
     </Section>
   );
 }

@@ -1,16 +1,22 @@
-import * as React from "react";
+import React from "react";
 import Header from "./components/common/Header";
 import useWallet from "./hooks/useWallet";
 
 const App = () => {
-  const { account, balance, currentChain } = useWallet();
+  const { account, balance, currentChain, isMetaMaskInstalled } = useWallet();
   console.log({ account, balance, currentChain });
   return (
     <div>
       <Header />
-      {account}
-      <br />
-      {balance}
+      {isMetaMaskInstalled ? (
+        <>
+          {account}
+          <br />
+          {balance}
+        </>
+      ) : (
+        <p>Please install metamask</p>
+      )}
     </div>
   );
 };
