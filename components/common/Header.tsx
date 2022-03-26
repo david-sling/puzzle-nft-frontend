@@ -1,6 +1,6 @@
 import React from "react";
-import { Logo } from "../../assets";
-import classes from "../../styles/components/common/Header.module.scss";
+import { Logo } from "assets/images";
+import classes from "styles/components/common/Header.module.scss";
 import Section from "./Section";
 
 export default function Header() {

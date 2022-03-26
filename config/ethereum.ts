@@ -1,6 +1,6 @@
 import { ethers } from "ethers";
 import { CONTRACT_ADDRESS } from "./constants";
-import PuzzleABI from "../artifacts/contracts/Puzzle.sol/Puzzle.json";
+import PuzzleABI from "artifacts/contracts/Puzzle.sol/Puzzle.json";
 
 const { ethereum } = window;
 export const checkMetamaskInstalled = () =>

@@ -1,8 +1,8 @@
 import { ethers } from "ethers";
 import { useCallback, useEffect, useState } from "react";
-import { ALLOWED_CHAINS } from "../config/constants";
-import { ethereum, checkMetamaskInstalled, provider } from "../config/ethereum";
-import { Chain } from "../interfaces";
+import { ALLOWED_CHAINS } from "config/constants";
+import { ethereum, checkMetamaskInstalled, provider } from "config/ethereum";
+import { Chain } from "interfaces";
 
 const useWallet = () => {
   const [account, setAccount] = useState("");
