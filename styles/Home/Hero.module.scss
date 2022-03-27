@@ -62,10 +62,10 @@
   margin-top: -100px;
   z-index: 5;
   button {
-    &:nth-child(1) {
+    &.button1 {
       --theme: #8850e7;
     }
-    &:nth-child(2) {
+    &.button2 {
       --theme: #607cde;
     }
     margin-right: 17px;

@@ -16,4 +16,12 @@ button {
   cursor: pointer;
   border: 0;
   font-family: "Sk-Modernist";
+  &.disabled {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+}
+
+a {
+  text-decoration: none;
 }

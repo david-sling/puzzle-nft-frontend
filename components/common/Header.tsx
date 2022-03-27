@@ -3,10 +3,10 @@ import { Logo } from "assets/images";
 import classes from "styles/common/Header.module.scss";
 import Section from "./Section";
 import { useWallet } from "context/wallet";
+import { OPENSEA_MARKETPLACE } from "config/constants";
 
 export default function Header() {
-  const { mintToken, tokens } = useWallet();
-  // console.log({ tokens });
+  const { mintToken, minting } = useWallet();
   return (
     <Section
       className={classes.container}
@@ -20,8 +20,16 @@ export default function Header() {
         <nav className={classes.nav}>
           <p>ABOUT US</p>
           <p>MY PUZZLE</p>
-          <p>MARKETPLACE</p>
-          <button onClick={mintToken}>MINT</button>
+          <a
+            href={OPENSEA_MARKETPLACE}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <p>MARKETPLACE</p>
+          </a>
+          <button className={minting ? "disabled" : ""} onClick={mintToken}>
+            MINT{minting ? "ING" : ""}
+          </button>
         </nav>
       </div>
     </Section>

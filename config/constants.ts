@@ -13,4 +13,7 @@ export const ALLOWED_CHAINS: Chain[] = [
   },
 ];
 
-export const mintPrice = 0.05; //
+export const MINT_PRICE = 0.05; //
+
+export const OPENSEA_MARKETPLACE =
+  "https://testnets.opensea.io/collection/puzzle-tdoctd9omz";

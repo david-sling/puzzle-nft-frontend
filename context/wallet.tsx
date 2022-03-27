@@ -7,14 +7,14 @@ import {
   useContext,
 } from "react";
 import { ethers } from "ethers";
-import { ALLOWED_CHAINS, mintPrice } from "config/constants";
+import { ALLOWED_CHAINS, MINT_PRICE } from "config/constants";
 import {
   ethereum,
   checkMetamaskInstalled,
   provider,
   Puzzle,
 } from "config/ethereum";
-import { Chain, Token } from "interfaces";
+import { Chain, Errored, Token } from "interfaces";
 
 interface Props {
   account: string;
@@ -24,15 +24,14 @@ interface Props {
   connect: () => Promise<string>;
   disconnect: () => void;
   mintToken: () => Promise<
-    | {
-        minted: ethers.ContractTransaction;
-        success: boolean;
-      }
-    | {
-        error: any;
-      }
+    Errored<{
+      minted: ethers.ContractTransaction;
+      success: boolean;
+    }>
   >;
   tokens?: Token[];
+  lastMintedToken?: Token;
+  minting: boolean;
 }
 const WalletContext = createContext<Props>({
   account: "",
@@ -41,6 +40,7 @@ const WalletContext = createContext<Props>({
   connect: async () => "",
   disconnect: () => {},
   mintToken: async () => ({ error: "Function Not Loaded" }),
+  minting: false,
 });
 
 export const useWallet = () => useContext(WalletContext);
@@ -55,6 +55,10 @@ export const WalletProvider: FC = (props) => {
   const [listeningForAccountChange, setListeningForAccountChange] =
     useState(false);
   const [tokens, setTokens] = useState<Token[] | undefined>(undefined);
+  const [lastMintedToken, setLastMintedToken] = useState<Token | undefined>(
+    undefined
+  );
+  const [minting, setMinting] = useState(false);
 
   const getCurrentChain = async (id?: number) => {
     if (!checkMetamaskInstalled()) return setCurrentChain(undefined);
@@ -97,7 +101,7 @@ export const WalletProvider: FC = (props) => {
         { length: parseInt(tokenCount.toString()) },
         async (_, idx) => {
           const tokenId = parseInt(
-            await (await Puzzle.tokenOfOwnerByIndex(address, idx)).toString()
+            (await Puzzle.tokenOfOwnerByIndex(address, idx)).toString()
           );
           const uri = await Puzzle.tokenURI(tokenId);
           return { tokenId, uri };
@@ -118,22 +122,27 @@ export const WalletProvider: FC = (props) => {
   const disconnect = () => setAccount("");
 
   const mintToken = async (): Promise<
-    | {
-        minted: ethers.ContractTransaction;
-        success: boolean;
-      }
-    | {
-        error: any;
-      }
+    Errored<{
+      minted: ethers.ContractTransaction;
+      success: boolean;
+    }>
   > => {
+    setMinting(true);
     try {
       const minter = account || (await connect());
       const minted = await Puzzle.payToMint(minter, {
-        value: ethers.utils.parseEther(mintPrice.toString()),
+        value: ethers.utils.parseEther(MINT_PRICE.toString()),
       });
-      console.log({ minted });
+      await minted.wait();
+      const tokens = await getTokens();
+      if (!tokens) throw "Couldn't fetch tokens";
+      const lastMintedToken = tokens[tokens?.length - 1];
+      setLastMintedToken(lastMintedToken);
+      console.log({ lastMintedToken });
+      setMinting(false);
       return { minted, success: true };
     } catch (error) {
+      setMinting(false);
       return { error };
     }
   };
@@ -162,6 +171,8 @@ export const WalletProvider: FC = (props) => {
         disconnect,
         mintToken,
         tokens,
+        lastMintedToken,
+        minting,
       }}
     />
   );
