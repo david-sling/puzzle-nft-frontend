@@ -17,10 +17,9 @@
         height: 100vh !important;
         border: 0;
       }
-      canvas {
-      }
     </style>
     <script src="matter.js"></script>
+    <script src="decomp.js"></script>
     <script>
       const {
         Engine,
@@ -48,12 +47,13 @@
           width: window.innerWidth,
           height: window.innerHeight,
           pixelRatio: 2,
-          background: "#fff",
+          background: "transparent",
           wireframes: false,
         },
       });
 
-      engine.world.gravity.y = 0.01;
+      engine.world.gravity.y = -0.01;
+      engine.world.gravity.x = 0.03;
 
       // create bounds
       var ground = Bodies.rectangle(
@@ -61,7 +61,7 @@
         window.innerHeight + 80,
         window.innerWidth + 320,
         160,
-        { render: { fillStyle: "#fff" }, isStatic: true }
+        { render: { fillStyle: "transparent " }, isStatic: true }
       );
       var wallLeft = Bodies.rectangle(
         -80,
@@ -84,22 +84,68 @@
         160,
         { isStatic: true }
       );
+      const cursor = Bodies.rectangle(460, 120, 10, 10);
 
-      const colors = ["#D777EF", "#EDBF4A", "#7791EF", "#D777EF"];
+      const colors = ["#D777EF", "#EDBF4A", "#7791EF"];
 
       const bodies = [
         {
           vertices: [
             { x: 0, y: 0 },
+            { x: 0, y: 0 },
             { x: 50, y: 50 },
-            { x: 100, y: 50 },
+            { x: 50, y: 50 },
+            { x: 50, y: 30 },
+            { x: 150, y: 30 },
+            { x: 150, y: 30 },
           ],
         },
         {
           vertices: [
-            { x: 100, y: 100 },
-            { x: 70, y: 20 },
-            { x: 100, y: 50 },
+            { x: 50, y: 100 },
+            { x: 100, y: 0 },
+            { x: 50, y: 50 },
+            { x: 50, y: 50 },
+            { x: 0, y: 50 },
+          ],
+        },
+        {
+          vertices: [
+            { x: 0, y: 0 },
+            { x: 100, y: 0 },
+            { x: 30, y: 30 },
+            { x: 30, y: 30 },
+            { x: 0, y: 100 },
+          ],
+        },
+        {
+          vertices: [
+            { x: 0, y: 0 },
+            { x: 100, y: 70 },
+            { x: 70, y: 70 },
+            { x: 70, y: 70 },
+            { x: 70, y: 100 },
+          ],
+        },
+        {
+          vertices: [
+            { x: 0, y: 0 },
+            { x: 0, y: 0 },
+            { x: 50, y: 50 },
+            { x: 50, y: 50 },
+            { x: 50, y: 30 },
+            { x: 150, y: 30 },
+            { x: 150, y: 30 },
+          ],
+          //   render: { fillStyle: "#000" },
+        },
+        {
+          vertices: [
+            { x: 0, y: 0 },
+            { x: 100, y: 0 },
+            { x: 30, y: 30 },
+            { x: 30, y: 30 },
+            { x: 0, y: 100 },
           ],
         },
         {
@@ -112,50 +158,32 @@
         {
           vertices: [
             { x: 0, y: 0 },
-            { x: 50, y: 50 },
-            { x: 100, y: 50 },
+            { x: 100, y: 00 },
+            { x: 30, y: 40 },
+            { x: 30, y: 40 },
+            { x: 0, y: 100 },
           ],
         },
         {
           vertices: [
             { x: 0, y: 0 },
-            { x: 50, y: 50 },
-            { x: 100, y: 50 },
-          ],
-        },
-        {
-          vertices: [
-            { x: 100, y: 100 },
-            { x: 70, y: 20 },
-            { x: 100, y: 50 },
-          ],
-        },
-        {
-          vertices: [
-            { x: 150, y: 120 },
-            { x: 120, y: 150 },
-            { x: 150, y: 170 },
+            { x: 100, y: 00 },
+            { x: 30, y: 40 },
+            { x: 30, y: 40 },
+            { x: 0, y: 100 },
           ],
         },
         {
           vertices: [
             { x: 0, y: 0 },
-            { x: 50, y: 50 },
-            { x: 100, y: 50 },
-          ],
-        },
-        {
-          vertices: [
-            { x: 0, y: 0 },
-            { x: 50, y: 50 },
-            { x: 100, y: 50 },
-          ],
-        },
-        {
-          vertices: [
-            { x: 100, y: 100 },
-            { x: 70, y: 20 },
-            { x: 100, y: 50 },
+            { x: 100, y: 00 },
+            { x: 30, y: 40 },
+            { x: 30, y: 40 },
+            { x: 0, y: 150 },
+            // { x: 50, y: 30 },
+            // { x: 50, y: 30 },
+            // { x: 40, y: 100 },
+            // { x: 0, y: 0 },
           ],
         },
         {
@@ -179,7 +207,7 @@
           vertices,
           {
             position: {
-              x: Math.random() * 300,
+              x: Math.random() * (window.innerWidth - 50),
               y: Math.random() * 300,
             },
             force: { x: Math.random() * -0.002, y: Math.random() * 0.002 },
@@ -191,7 +219,14 @@
           true
         )
       );
-      World.add(engine.world, [ground, wallLeft, wallRight, roof, ...bodies]);
+      World.add(engine.world, [
+        ground,
+        wallLeft,
+        wallRight,
+        roof,
+        // cursor,
+        ...bodies,
+      ]);
       // add all of the bodies to the world
 
       // add mouse control
@@ -203,6 +238,7 @@
             render: {
               visible: false,
             },
+            // bodies: [cursor],
           },
         });
 
