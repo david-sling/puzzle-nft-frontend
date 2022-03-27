@@ -1,20 +1,13 @@
 import { Polygon, RoundArrow } from "assets/images";
 import Section from "components/common/Section";
 import { MINT_PRICE, OPENSEA_MARKETPLACE } from "config/constants";
-import { Puzzle } from "config/ethereum";
 import { useWallet } from "context/wallet";
-import { FC, useEffect, useState } from "react";
+import { FC } from "react";
 import classes from "styles/Home/Hero.module.scss";
 
 const Hero: FC = () => {
   const { mintToken, minting } = useWallet();
 
-  // useEffect(() => {
-  //   Puzzle.getTotalMinted()
-  //     .then((total) => console.log({ total: parseInt(total.toString()) }))
-  //     .catch((err) => console.log({ err }));
-  //   Puzzle.owner().then((owner) => console.log({ owner }));
-  // }, []);
   return (
     <Section
       className={classes.container}

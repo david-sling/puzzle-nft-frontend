@@ -79,7 +79,6 @@ export const WalletProvider: FC = (props) => {
       (await ethereum.request?.({
         method: "eth_requestAccounts",
       })) || [];
-    console.log({ account });
     setAccount(account);
     return account;
   };
@@ -93,7 +92,6 @@ export const WalletProvider: FC = (props) => {
 
   const getTokens = async () => {
     const address = account || (await connect());
-    console.log({ address });
     if (!address) return undefined;
     const tokenCount = await Puzzle.balanceOf(address);
     const tokens = await Promise.all(
@@ -108,7 +106,6 @@ export const WalletProvider: FC = (props) => {
         }
       )
     );
-    console.log({ tokens });
     setTokens(tokens);
     return tokens;
   };
@@ -138,7 +135,6 @@ export const WalletProvider: FC = (props) => {
       if (!tokens) throw "Couldn't fetch tokens";
       const lastMintedToken = tokens[tokens?.length - 1];
       setLastMintedToken(lastMintedToken);
-      console.log({ lastMintedToken });
       setMinting(false);
       return { minted, success: true };
     } catch (error) {
