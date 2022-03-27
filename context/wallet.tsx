@@ -14,7 +14,7 @@ import {
   provider,
   Puzzle,
 } from "config/ethereum";
-import { Chain } from "interfaces";
+import { Chain, Token } from "interfaces";
 
 interface Props {
   account: string;
@@ -32,6 +32,7 @@ interface Props {
         error: any;
       }
   >;
+  tokens?: Token[];
 }
 const WalletContext = createContext<Props>({
   account: "",
@@ -53,6 +54,7 @@ export const WalletProvider: FC = (props) => {
   const isMetaMaskInstalled = checkMetamaskInstalled();
   const [listeningForAccountChange, setListeningForAccountChange] =
     useState(false);
+  const [tokens, setTokens] = useState<Token[] | undefined>(undefined);
 
   const getCurrentChain = async (id?: number) => {
     if (!checkMetamaskInstalled()) return setCurrentChain(undefined);
@@ -85,9 +87,31 @@ export const WalletProvider: FC = (props) => {
     setBalance(parseFloat(ethers.utils.formatEther(balance)));
   }, [account]);
 
+  const getTokens = async () => {
+    const address = account || (await connect());
+    console.log({ address });
+    if (!address) return undefined;
+    const tokenCount = await Puzzle.balanceOf(address);
+    const tokens = await Promise.all(
+      Array.from(
+        { length: parseInt(tokenCount.toString()) },
+        async (_, idx) => {
+          const tokenId = parseInt(
+            await (await Puzzle.tokenOfOwnerByIndex(address, idx)).toString()
+          );
+          const uri = await Puzzle.tokenURI(tokenId);
+          return { tokenId, uri };
+        }
+      )
+    );
+    console.log({ tokens });
+    setTokens(tokens);
+    return tokens;
+  };
+
   const connect = async () => {
     const account = getAccount(true);
-    ethereum.on("accountsChanged", getAccount);
+    if (!listeningForAccountChange) ethereum.on("accountsChanged", getAccount);
     setListeningForAccountChange(true);
     return account;
   };
@@ -122,6 +146,10 @@ export const WalletProvider: FC = (props) => {
     getBalance();
   }, [getBalance]);
 
+  useEffect(() => {
+    getTokens();
+  }, [account]);
+
   return (
     <WalletContext.Provider
       {...props}
@@ -133,6 +161,7 @@ export const WalletProvider: FC = (props) => {
         connect,
         disconnect,
         mintToken,
+        tokens,
       }}
     />
   );

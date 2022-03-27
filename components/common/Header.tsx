@@ -5,7 +5,8 @@ import Section from "./Section";
 import { useWallet } from "context/wallet";
 
 export default function Header() {
-  const { mintToken } = useWallet();
+  const { mintToken, tokens } = useWallet();
+  // console.log({ tokens });
   return (
     <Section
       className={classes.container}
