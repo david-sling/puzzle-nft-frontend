@@ -8,3 +8,5 @@ export const ALLOWED_CHAINS: Chain[] = [
     name: "localhost",
   },
 ];
+
+export const mintPrice = 0.05; //

@@ -2,8 +2,10 @@ import React from "react";
 import { Logo } from "assets/images";
 import classes from "styles/common/Header.module.scss";
 import Section from "./Section";
+import { useWallet } from "context/wallet";
 
 export default function Header() {
+  const { mintToken } = useWallet();
   return (
     <Section
       className={classes.container}
@@ -18,7 +20,7 @@ export default function Header() {
           <p>ABOUT US</p>
           <p>MY PUZZLE</p>
           <p>MARKETPLACE</p>
-          <button>MINT</button>
+          <button onClick={mintToken}>MINT</button>
         </nav>
       </div>
     </Section>

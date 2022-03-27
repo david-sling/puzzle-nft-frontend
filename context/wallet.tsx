@@ -7,8 +7,13 @@ import {
   useContext,
 } from "react";
 import { ethers } from "ethers";
-import { ALLOWED_CHAINS } from "config/constants";
-import { ethereum, checkMetamaskInstalled, provider } from "config/ethereum";
+import { ALLOWED_CHAINS, mintPrice } from "config/constants";
+import {
+  ethereum,
+  checkMetamaskInstalled,
+  provider,
+  Puzzle,
+} from "config/ethereum";
 import { Chain } from "interfaces";
 
 interface Props {
@@ -16,11 +21,25 @@ interface Props {
   balance: number;
   isMetaMaskInstalled: boolean;
   currentChain?: Chain;
+  connect: () => Promise<string>;
+  disconnect: () => void;
+  mintToken: () => Promise<
+    | {
+        minted: ethers.ContractTransaction;
+        success: boolean;
+      }
+    | {
+        error: any;
+      }
+  >;
 }
 const WalletContext = createContext<Props>({
   account: "",
   balance: NaN,
   isMetaMaskInstalled: false,
+  connect: async () => "",
+  disconnect: () => {},
+  mintToken: async () => ({ error: "Function Not Loaded" }),
 });
 
 export const useWallet = () => useContext(WalletContext);
@@ -32,6 +51,8 @@ export const WalletProvider: FC = (props) => {
     undefined
   );
   const isMetaMaskInstalled = checkMetamaskInstalled();
+  const [listeningForAccountChange, setListeningForAccountChange] =
+    useState(false);
 
   const getCurrentChain = async (id?: number) => {
     if (!checkMetamaskInstalled()) return setCurrentChain(undefined);
@@ -42,16 +63,19 @@ export const WalletProvider: FC = (props) => {
     ethereum.on("chainChanged", getCurrentChain);
   };
 
-  const getAccount = async () => {
-    if (!checkMetamaskInstalled()) return setAccount("");
+  const getAccount = async (overRideListener?: boolean): Promise<string> => {
+    if (!overRideListener && !listeningForAccountChange) return "";
+    if (!checkMetamaskInstalled()) {
+      setAccount("");
+      return "";
+    }
     const [account] =
       (await ethereum.request?.({
         method: "eth_requestAccounts",
       })) || [];
     console.log({ account });
     setAccount(account);
-
-    ethereum.on("accountsChanged", getAccount);
+    return account;
   };
 
   const getBalance = useCallback(async () => {
@@ -61,8 +85,36 @@ export const WalletProvider: FC = (props) => {
     setBalance(parseFloat(ethers.utils.formatEther(balance)));
   }, [account]);
 
+  const connect = async () => {
+    const account = getAccount(true);
+    ethereum.on("accountsChanged", getAccount);
+    setListeningForAccountChange(true);
+    return account;
+  };
+  const disconnect = () => setAccount("");
+
+  const mintToken = async (): Promise<
+    | {
+        minted: ethers.ContractTransaction;
+        success: boolean;
+      }
+    | {
+        error: any;
+      }
+  > => {
+    try {
+      const minter = account || (await connect());
+      const minted = await Puzzle.payToMint(minter, {
+        value: ethers.utils.parseEther(mintPrice.toString()),
+      });
+      console.log({ minted });
+      return { minted, success: true };
+    } catch (error) {
+      return { error };
+    }
+  };
+
   useEffect(() => {
-    getAccount();
     getCurrentChain();
   }, []);
 
@@ -73,7 +125,15 @@ export const WalletProvider: FC = (props) => {
   return (
     <WalletContext.Provider
       {...props}
-      value={{ account, balance, currentChain, isMetaMaskInstalled }}
+      value={{
+        account,
+        balance,
+        currentChain,
+        isMetaMaskInstalled,
+        connect,
+        disconnect,
+        mintToken,
+      }}
     />
   );
 };

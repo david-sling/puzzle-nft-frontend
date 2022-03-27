@@ -1,16 +1,19 @@
 import { Polygon, RoundArrow } from "assets/images";
 import Section from "components/common/Section";
 import { Puzzle } from "config/ethereum";
+import { useWallet } from "context/wallet";
 import { FC, useEffect, useState } from "react";
 import classes from "styles/Home/Hero.module.scss";
 
 const Hero: FC = () => {
-  useEffect(() => {
-    Puzzle.getTotalMinted()
-      .then((total) => console.log({ total: parseInt(total.toString()) }))
-      .catch((err) => console.log({ err }));
-    Puzzle.owner().then((owner) => console.log({ owner }));
-  }, []);
+  const { mintToken } = useWallet();
+
+  // useEffect(() => {
+  //   Puzzle.getTotalMinted()
+  //     .then((total) => console.log({ total: parseInt(total.toString()) }))
+  //     .catch((err) => console.log({ err }));
+  //   Puzzle.owner().then((owner) => console.log({ owner }));
+  // }, []);
   return (
     <Section
       className={classes.container}
@@ -29,7 +32,7 @@ const Hero: FC = () => {
         </div>
       </div>
       <div className={classes.ctas}>
-        <button>
+        <button onClick={mintToken}>
           <div className={classes.ps}>
             <p className={classes.p1}>Mint a random piece for</p>
             <div className={classes.polygon}>
